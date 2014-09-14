@@ -1,0 +1,27 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET           /                                                   controllers.Application.index()
+
+# Map static resources from the /public folder to the /assets URL path
+GET           /assets/*file                                       controllers.Assets.at(path="/public", file)
+
+GET           /buildings                                          controllers.Buildings.getBuildingList
+POST          /buildings                                          controllers.Buildings.create
+GET           /buildings/:buildingId                              controllers.Buildings.get(buildingId: Long)
+PUT           /buildings/:buildingId                              controllers.Buildings.edit(buildingId: Long)
+DELETE        /buildings/:buildingId                              controllers.Buildings.delete(buildingId: Long)
+
+GET           /buildings/:buildingId/elevators                    controllers.Elevators.get(buildingId: Long)
+POST          /buildings/:buildingId/elevators                    controllers.Elevators.create(buildingId: Long)
+PUT           /buildings/:buildingId/elevators/:elevatorId        controllers.Elevators.edit(buildingId: Long, elevatorId: Long)
+DELETE        /buildings/:buildingId/elevators/:elevatorId        controllers.Elevators.delete(buildingId: Long, elevatorId: Long)
+
+GET           /elevators/:elevatorId                              controllers.Elevators.getElevator(elevatorId: Long)
+POST          /elevators/:elevatorId/floor                        controllers.ElevatorFloors.create(elevatorId: Long)
+DELETE        /elevators/:elevatorId/floor/:floor                 controllers.ElevatorFloors.delete(elevatorId: Long, floor: Long)
+DELETE        /elevators/:elevatorId/allfloors                    controllers.ElevatorFloors.deleteAll(elevatorId: Long)
+
+

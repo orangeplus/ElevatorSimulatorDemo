@@ -1,0 +1,25 @@
+div.floors {
+    width: 650px;
+}
+
+div.floors div.floor {
+    width: 60px;
+    height: 60px;
+    margin: 0;
+    border: 1px black solid;
+    float: left;
+    text-align: center;
+    vertical-align: middle;
+}
+
+div.floors div.ground{
+    background-color: yellow
+}
+
+div.floors div.visited {
+    background-color: lightgreen
+}
+
+div.floors div.not-visited {
+    background-color: #FE8B8B
+}

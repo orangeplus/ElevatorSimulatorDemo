@@ -1,0 +1,80 @@
+@()
+
+@main("Elevator Simulator") {
+
+    <script type="text/x-handlebars">
+        <div class="navbar">
+            <div class="navbar-inner">
+                <ul class="nav">
+                    <li>{{#link-to 'buildings'}}Elevator Simulator{{/link-to}}</li>
+                    <li>{{#link-to 'buildings'}}Buildings{{/link-to}}</li>
+                    <li>{{#link-to 'about'}}About{{/link-to}}</li>
+                </ul>
+            </div>
+        </div>
+
+        <div>{{outlet}}</div>
+    </script>
+
+    <script type="text/x-handlebars" id="about">
+        <h1>About</h1>
+        <div>Demonstration application written in Java/Play Framework with Ember front end.</div>
+    </script>
+
+    <div class="container-fluid">
+        <div class="row-fluid">
+            <script type="text/x-handlebars" id="buildings">
+                <div class="span3">
+                    <h2>Buildings</h2>
+                    <ul>
+                        {{#each}}
+                        <li>
+                            {{#link-to 'building' this}}
+                                {{name}}<br/>
+                                {{createDate}}
+                            {{/link-to}}
+                        </li>
+                        {{/each}}
+                    </ul>
+                </div>
+                <div class="span6">
+                    {{outlet}}
+                </div>
+            </script>
+        </div>
+    </div>
+
+
+    <script type="text/x-handlebars" id="building/index">
+        <p class="text-warning">Please select a building</p>
+    </script>
+
+    <script type="text/x-handlebars" id="building">
+        <ul class="build_details" style="margin-top:60px">
+            <li>Name: {{name}}</li>
+            <li>Floors: {{maxFloor}}</li>
+            <li>People: {{people}}</li>
+            <li>Elevators:
+                <ul>
+                {{#each elevators}}
+                    <li>{{#link-to "elevator" this}}Elevator {{number}} type: {{elevatorType}} {{/link-to}}</li>
+                {{/each}}
+                </ul>
+            </li>
+        </ul>
+        <div>{{outlet}}</div>
+    </script>
+
+    <script type="text/x-handlebars" id="elevator">
+        <h2>Elevator {{id}}</h2>
+        <h3>Floors:</h3>
+        <div class="floors">
+            {{#each displayFloors}}
+                {{#view "elevator" contentBinding="this"}}
+                    <div {{bind-attr class='floorType floorClass'}}>{{floor}}</div>
+                {{/view}}
+            {{/each}}
+        </div>
+    </script>
+
+}
