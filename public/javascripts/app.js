@@ -178,7 +178,8 @@
         fetch: function(elevatorId, maxFloor, callback) {
             var self = this;
             $.getJSON('/elevators/' + elevatorId, function (data) {
-                self.setValues(data);
+                data.maxFloor = maxFloor;
+                self.populate(data);
                 if (callback !== undefined) {
                     callback();
                 }
@@ -186,14 +187,14 @@
         },
 
         populate: function(data) {
-            self.set('id', data.id);
-            self.set('maxFloor', maxFloor)
-            self.set('buildingId', data.building_id);
-            self.set('floors', data.floors);
-            self.set('isExpress', data.isExpress);
-            self.set('maxPeople', data.maxPeople);
-            var displayFloors = self.populateFloors();
-            self.set('displayFloors', displayFloors);
+            this.set('id', data.id);
+            this.set('maxFloor', data.maxFloor)
+            this.set('buildingId', data.building_id);
+            this.set('floors', data.floors);
+            this.set('isExpress', data.isExpress);
+            this.set('maxPeople', data.maxPeople);
+            var displayFloors = this.populateFloors();
+            this.set('displayFloors', displayFloors);
         },
 
         // Create floor models for entire building
