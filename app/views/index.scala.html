@@ -12,7 +12,6 @@
                 </ul>
             </div>
         </div>
-
         <div>{{outlet}}</div>
     </script>
 
@@ -26,12 +25,13 @@
             <script type="text/x-handlebars" id="buildings">
                 <div class="span3">
                     <h2>Buildings</h2>
-                    <ul>
+                    <ul class="buildings">
+                        <li>{{#link-to 'newBuilding'}}Add new building{{/link-to}}</li>
                         {{#each}}
                         <li>
                             {{#link-to 'building' this}}
-                                {{name}}<br/>
-                                {{createDate}}
+                                <span class="building-name">{{name}}</span><br/>
+                                {{format-date createDate}}
                             {{/link-to}}
                         </li>
                         {{/each}}
@@ -45,7 +45,25 @@
     </div>
 
     <script type="text/x-handlebars" id="buildings/index">
-        <p class="text-warning">Please select a building</p>
+        <h4>Elevator Simulator</h4>
+        <p>Please select a building on the left to begin.</p>
+    </script>
+
+
+    <script type="text/x-handlebars" id="newBuilding">
+        <h3>Add new Building</h3>
+        <div class="add-new-elevator">
+            <form {{action "createBuilding" on="submit"}}>
+                <label class="textinput">Name:</label>
+                {{input label="name" value=name type="text"}}
+                <label class="textinput">Number of people in simulation:</label>
+                {{input label="people" value=people type="text"}}
+                <label class="textinput">Floors in building:</label>
+                {{input label="maxFloor" value=maxFloor type="text"}}
+                <label class="textinput">&nbsp;</label>
+                <button class="btn btn-primary btn-block" type="submit">Create</button>
+            </form>
+        </div>
     </script>
 
     <script type="text/x-handlebars" id="building">

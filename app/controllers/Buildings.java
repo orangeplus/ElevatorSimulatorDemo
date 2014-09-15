@@ -25,9 +25,9 @@ public class Buildings extends ApiController {
         if (json == null) {
             return badRequest("No data sent");
         } else {
-            String name = json.findPath("name").textValue();
-            Long people = json.findPath("people").longValue();
-            Long maxFloor = json.findPath("maxFloor").longValue();
+            String name = json.findPath("name").asText();
+            long people  = Long.valueOf(json.findPath("people").asText());
+            long maxFloor = Long.valueOf(json.findPath("maxFloor").asText());
 
             List<String> errors = getBuldingSubmitErrors(name, people, maxFloor);
             if (errors.size() > 0) {

@@ -10,6 +10,7 @@ GET           /assets/*file                                       controllers.As
 
 GET           /buildings                                          controllers.Buildings.getBuildingList
 POST          /buildings                                          controllers.Buildings.create
+POST          /buildings/null                                          controllers.Buildings.create
 GET           /buildings/:buildingId                              controllers.Buildings.get(buildingId: Long)
 PUT           /buildings/:buildingId                              controllers.Buildings.edit(buildingId: Long)
 DELETE        /buildings/:buildingId                              controllers.Buildings.delete(buildingId: Long)

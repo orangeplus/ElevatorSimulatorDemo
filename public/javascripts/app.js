@@ -7,10 +7,14 @@
     const GROUND = 'ground', VISITED = 'visited', NOTVISITED = 'not-visited';
 
 
-    // Routes
+    /****************************************************
+     ROUTER
+     ****************************************************/
+
     App.Router.map(function() {
         this.route("about");
         this.route("buildings", function() {
+            this.resource('newBuilding', {path: 'new'});
             this.resource('building', { path: ':building_id' }, function() {
                 this.resource('elevator', { path: ':elevator_id' });
                 this.resource('newElevator', {path: 'new'});
@@ -23,6 +27,30 @@
             return this.store.find("building");
         }
     });
+
+
+    /****************************************************
+     ROUTEES
+     ****************************************************/
+
+    App.BuildingsRoute = Ember.Route.extend({
+        model: function() {
+            return this.store.find("building");
+        }
+    });
+
+
+    App.NewBuildingRoute = Ember.Route.extend({
+        model: function() {
+            return this.store.createRecord('building');
+        },
+
+        setupController: function (controller, model) {
+            console.log(controller);
+            controller.set("model", model);
+        }
+    });
+
 
     App.BuildingRoute = Ember.Route.extend({
         setupController: function (controller, model) {
@@ -63,8 +91,12 @@
     App.NewElevatorRoute = Ember.Route.extend({
         setupController: function (controller, model) {
             var elevator = App.ElevatorModel.create({});
+            elevator.set('id', 0);
             elevator.set('maxFloor', model.maxFloor);
-            elevator.set('buildingId', model.building_id);
+            elevator.set('buildingId', model.id);
+            elevator.set('floors', "0");
+            elevator.set('isExpress',false);
+            elevator.set('maxPeople', 10);
             controller.set("model", elevator);
         }
     });
@@ -78,6 +110,10 @@
             });
         }
     });
+
+    /****************************************************
+     Views
+     ****************************************************/
 
     App.ElevatorFloorView = Ember.View.extend({
         // add and remove floors
@@ -117,6 +153,25 @@
 
     });
 
+    /****************************************************
+     Controllers
+     ****************************************************/
+
+    App.NewBuildingController = Ember.Controller.extend({
+        actions: {
+            createBuilding: function() {
+                var record = this.store.createRecord('building',{
+                    name: name,
+                    maxFloor: maxFloor,
+                    people: people
+                });
+
+                record.save();
+                return true;
+            }
+        }
+    })
+
     App.NewElevatorController = Ember.Controller.extend({
         isExpressValues: [
             {label: "Express", id: 1},
@@ -130,14 +185,6 @@
                 });
             }
         }
-    });
-
-    // Models
-    App.Building = DS.Model.extend({
-        name: DS.attr('string'),
-        maxFloor: DS.attr('number'),
-        people: DS.attr('number'),
-        createDate: DS.attr('date')
     });
 
     App.ElevatorController = Ember.ObjectController.extend({
@@ -164,6 +211,18 @@
         }
 
     });
+
+    /****************************************************
+     Models
+     ****************************************************/
+
+    App.Building = DS.Model.extend({
+        name: DS.attr('string'),
+        maxFloor: DS.attr('number'),
+        people: DS.attr('number'),
+        createDate: DS.attr('date')
+    });
+
 
     App.ElevatorModel = Ember.Object.extend({
         id: null,
@@ -294,4 +353,12 @@
         elevatorId: null,
         isExpress: null
     });
+
+    /****************************************************
+     Helpers
+     ****************************************************/
+    Ember.Handlebars.helper('format-date', function(date) {
+        return moment(date).format('dddd, MMM Do');
+    });
+
 })();

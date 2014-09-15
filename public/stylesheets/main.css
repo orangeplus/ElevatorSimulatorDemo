@@ -47,3 +47,12 @@ div.add-new-elevator {
 .btn {
     width: 220px !important;
 }
+
+ul.buildings li {
+    list-style-type: none;
+    margin-bottom: 20px;
+}
+
+span.building-name {
+    font-size: 18px;
+}
