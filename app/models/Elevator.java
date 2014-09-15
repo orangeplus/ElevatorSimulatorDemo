@@ -22,7 +22,7 @@ public class Elevator extends Model {
     public Building getBuilding() { return building;}
     public void setBuilding(Building building) { this.building = building;}
 
-    @OneToMany(cascade = CascadeType.ALL)
+    @OneToMany(cascade = CascadeType.REMOVE)
     private List<ElevatorFloor> floors;
     public List<ElevatorFloor> getFloors() { return floors;}
 
@@ -73,8 +73,8 @@ public class Elevator extends Model {
 
     public List<Long> getListOfFloors() {
         List<Long> floors = new ArrayList<>();
-        for (int i=0; i < getFloors().size(); i++ ) {
-            floors.add(getFloors().get(i).getId());
+        for (ElevatorFloor floor: getFloors()) {
+            floors.add(floor.getFloor());
         }
         return floors;
     }

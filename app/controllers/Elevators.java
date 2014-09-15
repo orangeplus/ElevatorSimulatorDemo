@@ -93,8 +93,9 @@ public class Elevators extends ApiController {
         if (json == null) {
             return badRequest("No data sent");
         } else {
-            Long maxPeople = json.findPath("maxPeople").longValue();
+            String mp = json.findPath("maxPeople").asText();
             boolean isExpress = json.findPath("isExpress").booleanValue();
+            long maxPeople = Long.valueOf(mp);
 
             if (maxPeople < 1) {
                 return badRequest("Max people must be greater than zero");

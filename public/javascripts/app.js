@@ -62,60 +62,24 @@
 
     App.NewElevatorRoute = Ember.Route.extend({
         setupController: function (controller, model) {
-            controller.set("model", model);
+            var elevator = App.ElevatorModel.create({});
+            elevator.set('maxFloor', model.maxFloor);
+            elevator.set('buildingId', model.building_id);
+            controller.set("model", elevator);
         }
     });
 
     App.ElevatorRoute = Ember.Route.extend({
         setupController: function (controller, model) {
-            var elevator;
-            $.getJSON('/elevators/' + model.id, function (data) {
-                console.log(data);
-                var floors = $.map(data.floors.split(','), function (value) {
-                    return parseInt(value, 10);
-                });
-
-                var elevatorType = (data.isExpress) ? "Express" : "Standard";
-                elevator = Ember.Object.create({
-                    id: data.id,
-                    building_id: data.building_id,
-                    floors: data.floors,
-                    isExpress: data.isExpress,
-                    maxPeople: data.maxPeople,
-                    elevatorType: elevatorType,
-                    displayFloors: []
-                });
-
-                // Create floor models for entire building
-                for (var j = 0; j < model.maxFloor; j++) {
-                    var floorNumber = j + 1, floorType;
-
-                    if (j === 0) {
-                        floorType = GROUND;
-                    } else if (! data.isExpress) {
-                        floorType = VISITED;
-                    } else if ($.inArray(floorNumber, floors) > -1) {
-                        floorType = VISITED;
-                    } else {
-                        floorType = NOTVISITED;
-                    }
-
-                    var floor = Ember.Object.create({
-                        floorClass: 'floor',
-                        floor: floorNumber,
-                        floorType: floorType,
-                        elevatorId: elevator.get('id'),
-                        isExpress: data.isExpress
-                    });
-                    elevator.displayFloors.pushObject(floor);
-                }
+            var elevator = App.ElevatorModel.create({});
+            var con = controller;
+            elevator.fetch(model.get('id'), model.get('maxFloor'), function(){
                 controller.set("model", elevator);
-
             });
         }
     });
 
-    App.ElevatorView = Ember.View.extend({
+    App.ElevatorFloorView = Ember.View.extend({
         // add and remove floors
         click: function() {
             var self = this;
@@ -124,49 +88,209 @@
             }  else if (! this.get('content').get('isExpress')) {
                 alert("This is a standard elevator, floors may not be removed.");
             }  else if (this.get('content').get('floorType') === VISITED) {
+                self.get('content').set('floorType', NOTVISITED);
                 $.ajax({
-                    type: "POST",
-                    url: '/elevators/' + this.get('content').get('elevatorId') + '/floors',
-                    data: JSON.stringify({floor: this.get('content').get('floor')}),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function() {
-                        self.get('content').set('floorType', NOTVISITED);
+                    type: "DELETE",
+                    url: '/elevators/' + this.get('content').get('elevatorId') + '/floors/' + this.get('content').get('floor'),
+                    error: function () {
+                        self.get('content').set('floorType', VISITED);
                     }
                 });
 
             } else if (this.get('content').get('floorType') === NOTVISITED) {
-                $.ajax({
-                    type: "DELETE",
-                    url: '/elevators/' + this.get('content').get('elevatorId') + '/floors/' + this.get('content').get('floor'),
-                    success: function() {
-                        self.get('content').set('floorType', VISITED);
-                    }
+                self.get('content').set('floorType', VISITED);
+                    $.ajax({
+                        type: "POST",
+                        url: '/elevators/' + this.get('content').get('elevatorId') + '/floors',
+                        data: JSON.stringify({floor: this.get('content').get('floor')}),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        error: function() {
+                            console.log(xhr.status);
+                            console.log(thrownError);
+                           self.get('content').set('floorType', NOTVISITED);
+                        }
                 });
             }
             return false;
         }
 
     });
-/*
-    App.ElevatorController = Ember.Controller.extend({
-        init: function() {
 
-        },
-
+    App.NewElevatorController = Ember.Controller.extend({
+        isExpressValues: [
+            {label: "Express", id: 1},
+            {label: "Standard",id: 0}
+        ],
         actions: {
-            changeFloor: function() {
-                var something;
+            createElevator: function() {
+                var self = this;
+                self.model.createElevator(function(){
+                    self.transitionTo('buildings', self.get('buildingId'));
+                });
             }
         }
     });
 
- */
     // Models
     App.Building = DS.Model.extend({
         name: DS.attr('string'),
         maxFloor: DS.attr('number'),
         people: DS.attr('number'),
         createDate: DS.attr('date')
+    });
+
+    App.ElevatorController = Ember.ObjectController.extend({
+
+        isEdit: false,
+        isExpressValues: [
+            {label: "Express", id: true},
+            {label: "Standard",id: false}
+        ],
+        actions: {
+            setEdit: function() {
+                this.set('isEdit', true);
+            },
+
+            unSetEdit: function() {
+                this.set('isEdit', false);
+            },
+            updateElevator: function() {
+                var self = this;
+                self.model.save(function(){
+                    self.set('isEdit', false);
+                });
+            }
+        }
+
+    });
+
+    App.ElevatorModel = Ember.Object.extend({
+        id: null,
+        buildingId: null,
+        floors: null,
+        isExpress: null,
+        maxPeople: null,
+        maxFloor: null,
+        displayFloors: [],
+        test: "test",
+
+        fetch: function(elevatorId, maxFloor, callback) {
+            var self = this;
+            $.getJSON('/elevators/' + elevatorId, function (data) {
+                self.setValues(data);
+                if (callback !== undefined) {
+                    callback();
+                }
+            });
+        },
+
+        populate: function(data) {
+            self.set('id', data.id);
+            self.set('maxFloor', maxFloor)
+            self.set('buildingId', data.building_id);
+            self.set('floors', data.floors);
+            self.set('isExpress', data.isExpress);
+            self.set('maxPeople', data.maxPeople);
+            var displayFloors = self.populateFloors();
+            self.set('displayFloors', displayFloors);
+        },
+
+        // Create floor models for entire building
+        populateFloors: function() {
+            var self = this;
+            var displayFloors = [];
+            var visitedFloors = $.map(this.get('floors').split(','), function (value) {
+                return parseInt(value, 10);
+            });
+
+            for (var j = 0; j < self.get('maxFloor'); j++) {
+                var floorNumber = j + 1, floorType;
+
+                if (j === 0) {
+                    floorType = GROUND;
+                } else if (! self.get('isExpress')) {
+                    floorType = VISITED;
+                } else if ($.inArray(floorNumber, visitedFloors) > -1) {
+                    floorType = VISITED;
+                } else {
+                    floorType = NOTVISITED;
+                }
+
+                var elevatorFloor = App.ElevatorFloorModel.create({});
+                elevatorFloor.set('floor', floorNumber);
+                elevatorFloor.set('floorType', floorType);
+                elevatorFloor.set('elevatorId', self.get('id'));
+                elevatorFloor.set('isExpress', self.get('isExpress'));
+
+                displayFloors.pushObject(elevatorFloor);
+            }
+            return displayFloors;
+        },
+
+        save: function(callback) {
+            var self = this;
+            var data = JSON.stringify({
+                maxPeople: self.get('maxPeople'),
+                isExpress: self.get('isExpress')
+            });
+
+            $.ajax({
+                type: "PUT",
+                url: '/buildings/' + self.get('buildingId') + '/elevators/' + self.get('id'),
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function (xhr, ajaxOptions, thrownError) {
+                    alert('Update Failed \n\n ' +thrownError);
+                },
+                success: function() {
+                    var displayFloors = self.populateFloors();
+                    self.set('displayFloors', displayFloors);
+                    console.log('updated');
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                }
+            });
+        },
+
+        createNew: function() {
+            var self = this;
+            var data = JSON.stringify({
+                maxPeople: self.get('maxPeople'),
+                isExpress: self.get('isExpress')
+            });
+
+            $.ajax({
+                type: "POST",
+                url: '/buildings/' + self.get('buildingId') + '/elevators/',
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                error: function () {
+                    alert("update failed!")
+                },
+                success: function(data) {
+                    console.log('updated');
+                    this.populateFloors(); // in case isExpress has changed
+                    if (callback !== undefined) {
+                        callback();
+                    }
+                }
+            });
+        },
+
+        elevatorType: function() {
+            return (this.get('isExpress') ? "Express" : "Standard");
+        }.property('isExpress')
+    });
+
+    App.ElevatorFloorModel = Ember.Object.extend({
+        floorClass: 'floor',
+        floor: null,
+        floorType: null,
+        elevatorId: null,
+        isExpress: null
     });
 })();

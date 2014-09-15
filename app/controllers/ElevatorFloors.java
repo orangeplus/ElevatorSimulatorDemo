@@ -29,11 +29,12 @@ public class ElevatorFloors extends ApiController {
 
             ElevatorFloor elevatorFloor = ElevatorFloor.findByElevatorAndFloor(elevator, floor);
             if (elevatorFloor != null) {
-                return badRequest("Elevator already goes to this floor");
+                // return ok for this, the user's intent should have been met.
+                return ok("Elevator already goes to this floor");
             }
 
             ElevatorFloor.create(elevator, floor);
-            return ok();
+            return ok(Elevators.elevatorToJson(elevator));
         }
     }
 

@@ -27,7 +27,7 @@ public class ElevatorFloor extends Model {
     public void setFloor(long floor) { this.floor = floor; }
 
     @Constraints.Required
-    @ManyToOne(cascade = CascadeType.REMOVE)
+    @ManyToOne
     private Elevator elevator;
     public Elevator getElevator() { return elevator;}
     public void setElevator(Elevator elevator) { this.elevator = elevator;}

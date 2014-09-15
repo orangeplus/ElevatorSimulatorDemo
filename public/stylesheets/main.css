@@ -13,14 +13,37 @@ div.floors div.floor {
     vertical-align: middle;
 }
 
-div.floors div.ground{
+div.key {
+    width: 100%;
+    margin-bottom: 20px;
+    clear: both;
+}
+
+table.floors {
+    float: right;
+}
+
+table.floors td {
+    min-width: 20px;
+    font-size: 12px;
+}
+
+.floors .ground{
     background-color: yellow
 }
 
-div.floors div.visited {
+.floors .visited {
     background-color: lightgreen
 }
 
-div.floors div.not-visited {
+.floors .not-visited {
     background-color: #FE8B8B
+}
+
+div.add-new-elevator {
+    margin-left: 50px;
+}
+
+.btn {
+    width: 220px !important;
 }

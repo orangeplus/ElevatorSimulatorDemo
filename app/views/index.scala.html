@@ -44,8 +44,7 @@
         </div>
     </div>
 
-
-    <script type="text/x-handlebars" id="building/index">
+    <script type="text/x-handlebars" id="buildings/index">
         <p class="text-warning">Please select a building</p>
     </script>
 
@@ -68,19 +67,54 @@
     </script>
 
     <script type="text/x-handlebars" id="elevator">
-        <h3>Elevator {{id}}</h3>
-        <ul>
-            <li>Maximum Capacity: {{maxPeople}}</li>
-            <li>Type: {{elevatorType}}</li>
-        </ul>
-        <h4>Floors:</h4>
-        <div class="floors">
-            {{#each displayFloors}}
-                {{#view "elevator" contentBinding="this"}}
-                    <div {{bind-attr class='floorType floorClass'}}>{{floor}}</div>
-                {{/view}}
-            {{/each}}
-        </div>
+        <h3>Elevator Details</h3>
+        {{#if isEdit}}
+            <form {{action "updateElevator" on="submit"}}>
+                <label class="textinput">Capacity (persons):</label>
+                {{input label="Capacity" value=maxPeople type="text"}}
+                <label class="textinput">Type:</label>
+                {{view Ember.Select value=isExpress content=isExpressValues optionValuePath="content.id" optionLabelPath="content.label"}}
+                <label class="textinput">&nbsp;</label>
+                <button class="btn btn-primary btn-block" type="submit">Update</button>
+                <button class="btn btn-cancel btn-block" type="button" {{action 'unSetEdit'}} >Cancel</button>
+            </form>
+        {{else}}
+            <ul>
+                <li>Capacity: {{maxPeople}}</li>
+                <li>Type: {{elevatorType}}</li>
+                <li {{action 'setEdit'}}>Edit</li>
+            </ul>
+            <h4>Floors:</h4>
+            <div class="key">
+                <table class="floors">
+                    <tr>
+                        <td colspan="2">
+                            Key
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="ground">&nbsp;</td>
+                        <td>Ground floor, all elevators go here</td>
+                    </tr>
+                    <tr>
+                        <td class="visited">&nbsp;</td>
+                        <td>Elevator goes to this floor</td>
+                    </tr>
+                    <tr>
+                        <td class="not-visited">&nbsp;</td>
+                        <td>Elevator does not go to this floor</td>
+                    </tr>
+
+                </table>
+            </div>
+            <div class="floors">
+                {{#each displayFloors}}
+                    {{#view "elevatorFloor" contentBinding="this"}}
+                        <div {{bind-attr class='floorType floorClass'}}>{{floor}}</div>
+                    {{/view}}
+                {{/each}}
+            </div>
+        {{/if}}
     </script>
 
     <script type="text/x-handlebars" id="elevator/index">
@@ -88,12 +122,22 @@
     </script>
 
     <script type="text/x-handlebars" id="newElevator">
-        <h2>Add new elevator</h2>
+        <h3>Add new elevator</h3>
+        <div class="add-new-elevator">
+            <form {{action "createElevator" on="submit"}}>
+                <label class="textinput">Capacity (persons):</label>
+                {{input label="Capacity" value=maxPeople type="text"}}
+                <label class="textinput">Type:</label>
+                {{view Ember.Select content=isExpressValues optionValuePath="content.id" optionLabelPath="content.label"}}
+                <label class="textinput">&nbsp;</label>
+                <button class="btn btn-primary btn-block" type="submit">Create</button>
+            </form>
+        </div>
     </script>
 
     <script type="text/x-handlebars" id="components/elevator">
-        <h2>Elevator {{id}}</h2>
-        <h3>Floors:</h3>
+        <h3>Elevator Details</h3>
+        <h4>Floors:</h4>
         <div class="floors">
             {{#each displayFloors}}
                 {{#view "elevator" contentBinding="this"}}

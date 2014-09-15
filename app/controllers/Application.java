@@ -8,6 +8,9 @@ import views.html.*;
 public class Application extends Controller {
 
     public static Result index() {
+        if (request().uri().contains("#/building")) {
+            return redirect("/");
+        }
         return ok(index.render());
     }
 
