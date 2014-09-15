@@ -14,9 +14,7 @@ import java.util.List;
 public class Elevator extends Model {
     @Id
     private long id;
-    public long getId() {
-        return id;
-    }
+    public long getId() { return id; }
 
     @Constraints.Required
     @ManyToOne
@@ -34,10 +32,19 @@ public class Elevator extends Model {
     public long getMaxPeople() { return maxPeople;}
     public void setMaxPeople(long maxPeople) { this.maxPeople = maxPeople;}
 
+    private boolean isExpress;
+    public boolean isExpress() { return isExpress;}
+    public void setisExpress(boolean isExpress) { this.isExpress = isExpress;}
+
     public static Elevator create(Building building, Long maxPeople) {
+        return create(building, maxPeople, false);
+    }
+
+    public static Elevator create(Building building, Long maxPeople, boolean isExpress) {
         Elevator elevator = new Elevator();
         elevator.setBuilding(building);
         elevator.setMaxPeople(maxPeople);
+        elevator.setisExpress(isExpress);
         elevator.save();
         return elevator;
     }

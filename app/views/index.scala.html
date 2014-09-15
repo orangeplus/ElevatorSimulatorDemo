@@ -50,15 +50,17 @@
     </script>
 
     <script type="text/x-handlebars" id="building">
-        <ul class="build_details" style="margin-top:60px">
-            <li>Name: {{name}}</li>
+        <h2>Building: {{name}} </h2>
+        <ul class="build_details">
             <li>Floors: {{maxFloor}}</li>
             <li>People: {{people}}</li>
             <li>Elevators:
                 <ul>
+                    <li>{{#link-to "newElevator" this}}Add new elevator{{/link-to}}</li>
                 {{#each elevators}}
-                    <li>{{#link-to "elevator" this}}Elevator {{number}} type: {{elevatorType}} {{/link-to}}</li>
+                    <li>{{#link-to "elevator" this}}Elevator {{number}} is express: {{isExpress}} {{/link-to}}</li>
                 {{/each}}
+
                 </ul>
             </li>
         </ul>
@@ -66,6 +68,30 @@
     </script>
 
     <script type="text/x-handlebars" id="elevator">
+        <h3>Elevator {{id}}</h3>
+        <ul>
+            <li>Maximum Capacity: {{maxPeople}}</li>
+            <li>Type: {{elevatorType}}</li>
+        </ul>
+        <h4>Floors:</h4>
+        <div class="floors">
+            {{#each displayFloors}}
+                {{#view "elevator" contentBinding="this"}}
+                    <div {{bind-attr class='floorType floorClass'}}>{{floor}}</div>
+                {{/view}}
+            {{/each}}
+        </div>
+    </script>
+
+    <script type="text/x-handlebars" id="elevator/index">
+        <p>Select an elevator</p>
+    </script>
+
+    <script type="text/x-handlebars" id="newElevator">
+        <h2>Add new elevator</h2>
+    </script>
+
+    <script type="text/x-handlebars" id="components/elevator">
         <h2>Elevator {{id}}</h2>
         <h3>Floors:</h3>
         <div class="floors">
@@ -76,5 +102,7 @@
             {{/each}}
         </div>
     </script>
+
+
 
 }

@@ -9,8 +9,9 @@ import play.mvc.Result;
 /**
  * Created by keith on 9/13/2014.
  */
-public class ElevatorFloors extends Controller {
+public class ElevatorFloors extends ApiController {
     public static Result create(long elevatorId) {
+
         Elevator elevator = Elevator.find.byId(elevatorId);
         if (elevator == null) {
             return notFound("Elevator not found");

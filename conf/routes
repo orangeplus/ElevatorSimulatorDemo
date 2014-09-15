@@ -20,8 +20,9 @@ PUT           /buildings/:buildingId/elevators/:elevatorId        controllers.El
 DELETE        /buildings/:buildingId/elevators/:elevatorId        controllers.Elevators.delete(buildingId: Long, elevatorId: Long)
 
 GET           /elevators/:elevatorId                              controllers.Elevators.getElevator(elevatorId: Long)
-POST          /elevators/:elevatorId/floor                        controllers.ElevatorFloors.create(elevatorId: Long)
-DELETE        /elevators/:elevatorId/floor/:floor                 controllers.ElevatorFloors.delete(elevatorId: Long, floor: Long)
-DELETE        /elevators/:elevatorId/allfloors                    controllers.ElevatorFloors.deleteAll(elevatorId: Long)
+POST          /elevators/:elevatorId/floors                       controllers.ElevatorFloors.create(elevatorId: Long)
+DELETE        /elevators/:elevatorId/floors/:floor                controllers.ElevatorFloors.delete(elevatorId: Long, floor: Long)
+DELETE        /elevators/:elevatorId/floors                       controllers.ElevatorFloors.deleteAll(elevatorId: Long)
+
 
 

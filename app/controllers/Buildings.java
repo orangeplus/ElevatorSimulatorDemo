@@ -18,7 +18,7 @@ import java.util.List;
 /**
  * Created by keith on 9/13/2014.
  */
-public class Buildings extends Controller {
+public class Buildings extends ApiController {
 
     public static Result create() {
         JsonNode json = request().body().asJson();
@@ -43,7 +43,14 @@ public class Buildings extends Controller {
         ObjectNode result = Json.newObject();
         ArrayNode buildingNodes = result.putArray("buildings");
         for (Building building: Building.find.findList()) {
-            buildingNodes.add(buildingToJson(building));
+            ObjectNode node = buildingToJson(building);
+            ArrayNode elevatorsNodes = node.putArray("elevators");
+
+            for (Elevator elevator: building.getElevators()) {
+                elevatorsNodes.add(Elevators.elevatorToJson(elevator));
+            }
+
+            buildingNodes.add(node);
         }
         return ok(result);
     }
